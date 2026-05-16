@@ -1,0 +1,67 @@
+﻿{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PlatformIO: Upload (choose method)",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/select_upload.ps1"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": true
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PlatformIO: Upload Firmware",
+      "type": "shell",
+      "command": "pio",
+      "args": ["run", "-e", "reaction_game", "-t", "upload"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PlatformIO: Upload Files (SPIFFS)",
+      "type": "shell",
+      "command": "pio",
+      "args": ["run", "-e", "reaction_game", "-t", "uploadfs"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PlatformIO: Upload All (Files + Firmware)",
+      "dependsOn": [
+        "PlatformIO: Upload Files (SPIFFS)",
+        "PlatformIO: Upload Firmware"
+      ],
+      "dependsOrder": "sequence",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "PlatformIO: Upload via OTA (WiFi)",
+      "type": "shell",
+      "command": "pio",
+      "args": ["run", "-e", "ota", "-t", "upload", "--upload-port=ReactionGame.local"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
