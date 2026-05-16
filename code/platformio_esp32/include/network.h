@@ -102,16 +102,6 @@ void handleGetScores() {
   server.send(200, "application/json", content);
 }
 
-// GET /apinfo: return AP SSID and encryption info
-void handleAPInfo() {
-  String json = "{";
-  json += "\"ssid\":\"" + String(AP_SSID) + "\"";
-  json += ",\"password\":\"\"";
-  json += ",\"encryption\":\"nopass\"";
-  json += "}";
-  server.send(200, "application/json", json);
-}
-
 // POST /score: add new score to leaderboard
 void handlePostScore() {
   String name;
@@ -208,7 +198,7 @@ void handlePostScore() {
 
 // Initialize Access Point
 void initAP() {
-  WiFi.softAP(AP_SSID);
+  WiFi.softAP(AP_SSID, AP_PASSWORD);
   IPAddress ip = WiFi.softAPIP();
   Serial.print("AP started. SSID: ");
   Serial.print(AP_SSID);
@@ -249,7 +239,6 @@ void initOTA() {
 void initWebServer() {
   server.on("/", HTTP_GET, handleRoot);
   server.on("/scores", HTTP_GET, handleGetScores);
-  server.on("/apinfo", HTTP_GET, handleAPInfo);
   server.on("/score", HTTP_POST, handlePostScore);
   server.begin();
   Serial.println("HTTP server started");

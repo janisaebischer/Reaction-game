@@ -8,7 +8,7 @@
 
 // Access Point
 static const char AP_SSID[] = "ReactionGame";
-static const char AP_PASSWORD[] = ""; // empty = open network
+static const char AP_PASSWORD[] = "reaction-game"; // empty = open network
 
 // DNS
 static const int DNS_PORT = 53;
