@@ -1,0 +1,8 @@
+Bit 0: a
+Bit 1: f
+Bit 2: g
+Bit 3: e
+Bit 4: d
+Bit 5: c
+Bit 6: b
+Biz 7: punkt
