@@ -1,9 +1,12 @@
 ﻿# Reaction Game - ESP32 Project
 
-Minimales ESP32-Projekt für ein Reaktionsspiel. Der ESP32 läuft als Access Point und serviert eine einfache Webseite.
+Minimales ESP32-Projekt für ein Reaktionsspiel mit 15 Tastern, zufälligen Ziel-LEDs und vierstelliger Siebensegmentanzeige.
 
 ## Hardware
 - ESP32 DevKit Board
+- MCP23017-based I2C GPIO expander module for 15 buttons and 15 LEDs
+- 4-digit TPIC6C596-based seven-segment display module
+- 1x Ein/Aus-Schalter auf einem digitalen Eingang
 
 ## Quickstart
 
@@ -12,66 +15,51 @@ Minimales ESP32-Projekt für ein Reaktionsspiel. Der ESP32 läuft als Access Poi
 pio run -e reaction_game
 ```
 
-### Upload (Automatische Auswahl)
-Der einfachste Weg: **Terminal → Run Task…** → **PlatformIO: Upload (choose method)**
+### Upload
 
-Das Script fragt dich, ob du via Serial (USB) oder OTA (WiFi) hochladen möchtest:
-```
-1) Serial (USB) - Upload Firmware + Files
-2) OTA (WiFi)   - Upload Firmware only
-```
-
-### Upload manuell (Terminal)
-
-**Serial (USB) - Firmware + Dateien:**
 ```bash
-pio run -e reaction_game -t uploadfs && pio run -e reaction_game -t upload
+pio run -e reaction_game
 ```
 
-**OTA (WiFi) - nur Firmware:**
-```bash
-pio run -e ota -t upload --upload-port=ReactionGame.local
-```
+## Spielablauf
 
-### VS Code Tasks
-Alternative: **Terminal → Run Task…**
-- **PlatformIO: Upload (choose method)** ← Empfohlen!
-- PlatformIO: Upload Firmware
-- PlatformIO: Upload Files (SPIFFS)
-- PlatformIO: Upload All (Files + Firmware)
-- PlatformIO: Upload via OTA (WiFi)
+Nach dem Einschalten zeigt die Anlage `00.00`.
 
-## Verbindung
+1. Zwei Starttaster gedrückt halten für 3 Sekunden.
+2. Danach blinkt die Anzeige.
+3. Wenn beide Taster losgelassen werden, startet die Zeit und das Spiel.
+4. Eine zufällige Anzahl Ziel-LEDs leuchtet.
+5. Die gedrückten Ziele gehen aus, bis alle gefunden sind.
+6. Danach bleibt die Endzeit stehen, bis ein neues Spiel gestartet oder die Anlage ausgeschaltet wird.
+7. Beim Ausschalten gehen alle LEDs und die Anzeige aus.
 
-Nach dem Upload:
-1. WiFi-Netzwerk suchen: `ReactionGame-AP`
-2. Im Browser öffnen: `http://192.168.4.1`
-3. Seite sollte den Titel "Reaktionsspiel" anzeigen
+## Verdrahtung
 
-## OTA (Over-The-Air Updates)
+Die Standardbelegung ist in [include/settings.h](include/settings.h) konfiguriert.
 
-Der ESP32 lauscht auf OTA-Requests auf **Port 3232**. Nach dem ersten seriellen Upload:
-1. Mit `ReactionGame-AP` verbinden (oder `ReactionGame.local` über mDNS wenn möglich)
-2. Task **PlatformIO: Upload (choose method)** ausführen und **Option 2** wählen
-   
-   Oder manuell im Terminal:
-   ```bash
-   pio run -e ota -t upload --upload-port=ReactionGame.local
-   pio run -e ota -t upload --upload-port=192.168.4.1
-   ```
+- I2C SDA: GPIO 21
+- I2C SCL: GPIO 22
+- Display DATA: GPIO 18
+- Display CLOCK: GPIO 19
+- Display LATCH: GPIO 23
+- Power switch: GPIO 27
+
+Die 15 Taster hängen an der zweiten MCP23017-Hälfte, die 15 LEDs an der ersten.
+Die Starttaster sind per Default Taster 0 und 1.
+
+## Anpassungen
+
+- **Button-Mapping**: in [include/settings.h](include/settings.h)
+- **Anzeige-Reihenfolge**: in [include/settings.h](include/settings.h)
+- **Zielanzahl / Blinkzeiten**: in [include/settings.h](include/settings.h)
 
 ## Struktur
 
 ```
 src/
-  main.cpp           - ESP32 Access Point + Webserver + OTA
-data/
-  index.html         - Testseite
-scripts/
-  select_upload.ps1  - Interaktives Upload-Auswahlmenü
+  main.cpp           - Reaction game controller
+include/
+  reaction_game.h    - Spielzustandsmaschine
+  i2c_outputs.h      - MCP23017-Treiber
+  seven_segment_display.h - 7-Segment-Treiber
 ```
-
-## Anpassungen
-
-- **AP-SSID**: in `src/main.cpp` ändern (Zeile 8)
-- **Webseite**: `data/index.html` bearbeiten

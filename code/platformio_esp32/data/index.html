@@ -1,99 +1,186 @@
 <!doctype html>
 <html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Reaktionsspiel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-      :root{--accent:#7b46d6;--muted:#c9bfe6}
-      html,body{height:100%;margin:0;color:#efeaff}
-      body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:radial-gradient(1200px 600px at 10% 12%, rgba(139,88,224,0.22), transparent 15%), radial-gradient(900px 420px at 88% 88%, rgba(118,74,199,0.18), transparent 18%), linear-gradient(135deg,#3a0b46 0%, #240028 45%, #0b0410 100%)}
-      .wrap{max-width:860px;margin:40px auto;padding:18px}
-      .brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-      .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#a36bff);box-shadow:0 10px 30px rgba(123,70,214,0.18);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
-      h1{font-size:1.6rem;margin:0}
-      .subtitle{color:var(--muted);font-size:0.95rem}
-
-      /* Glass card with stronger contrast */
-      .card{background:rgba(16, 12, 24, 0.63);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:0;border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(6,3,12,0.6)}
-      .card-body{padding:16px 18px}
-
-      ol.score{list-style:none;margin:0;padding:0}
-      li.score-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.04)}
-      li.score-item:last-child{border-bottom:0}
-      .name{color:#ffffff;font-weight:600}
-      .pts{background:linear-gradient(90deg,#ffffff,#caa1ff);padding:6px 12px;border-radius:999px;color:#120018;font-weight:800;font-size:0.95rem;box-shadow:0 4px 12px rgba(123,70,214,0.12)}
-      .empty{padding:18px;text-align:center;color:#ddd}
-      .toolbar{display:flex;justify-content:flex-end;padding:8px 12px;background:linear-gradient(180deg,rgba(123,70,214,0.03),transparent)}
-      .btn-outline-light{color:#efeaff;border-color:rgba(255,255,255,0.06)}
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <div class="brand">
-        <div class="logo" role="img" aria-label="Stoppuhr">
-          <svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <g stroke="none" fill="none" fill-rule="evenodd">
-              <circle cx="12" cy="13" r="6" stroke="#FFFFFF" stroke-width="1.4" fill="rgba(255,255,255,0.04)"/>
-              <path d="M12 10.2v3.1l2.4 1.4" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M9.5 4.2l1-1.6" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-              <rect x="10.5" y="2" width="3" height="1.2" rx="0.3" fill="#FFFFFF" opacity="0.95"/>
-            </g>
-          </svg>
-        </div>
-        <div>
-          <h1>Reaktionsspiel</h1>
-          <div class="subtitle">Bestenliste — Top Spieler</div>
-        </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reaction Game</title>
+  <style>
+    :root{--bg:#0f1220;--panel:#171b2e;--panel2:#20263d;--text:#eef1ff;--muted:#9fa8c7;--accent:#6ee7ff;--good:#67e8a5;--bad:#ff7b7b}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at top, #1b2240 0, #0f1220 45%, #0a0d18 100%);color:var(--text);min-height:100vh}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    .hero{display:flex;justify-content:space-between;gap:16px;align-items:end;flex-wrap:wrap;margin-bottom:18px}
+    .hero-status{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+    h1{margin:0;font-size:2rem}
+    .sub{color:var(--muted);margin-top:6px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+    .card h2{margin:0 0 14px;font-size:1.1rem}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input,button{font:inherit;border-radius:12px;border:1px solid rgba(255,255,255,.12);padding:12px 14px}
+    input{background:#0e1120;color:var(--text);min-width:240px;flex:1}
+    button{background:linear-gradient(180deg,#2f3657,#232947);color:var(--text);cursor:pointer}
+    button.primary{background:linear-gradient(180deg,#2dd4bf,#0ea5e9);color:#07111a;border:none;font-weight:700}
+    button.danger{background:linear-gradient(180deg,#ff6b7f,#d9485f);color:white;border:none}
+    .status{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--muted);display:inline-flex;gap:8px;align-items:center}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--bad)}
+    .dot.on{background:var(--good)}
+    table{width:100%;border-collapse:collapse}
+    th,td{text-align:left;padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
+    th{color:var(--muted);font-weight:600;font-size:.88rem}
+    .muted{color:var(--muted)}
+    .split{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+    .panel-list{max-height:380px;overflow:auto}
+    .tag{display:inline-flex;padding:4px 10px;border-radius:999px;background:rgba(110,231,255,.14);color:var(--accent);font-size:.8rem}
+    @media (max-width:900px){.grid,.split{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Reaction Game</h1>
       </div>
-
-      <div class="card" role="region" aria-label="Bestenliste">
-        <div class="toolbar">
-          <button id="refreshBtn" class="btn btn-sm btn-outline-light me-2">Aktualisieren</button>
-        </div>
-        <div class="card-body">
-          <ol id="leaderboard" class="score" aria-live="polite">
-            <li class="empty">Lade Bestenliste…</li>
-          </ol>
-        </div>
+      <div class="hero-status">
+        <div id="status" class="status"><span id="dot" class="dot"></span><span id="statusText">Offline</span></div>
+        <div id="gameSwitchStatus" class="status"><span id="gameSwitchDot" class="dot"></span><span id="gameSwitchText">Gameswitch: -</span></div>
       </div>
     </div>
 
-    <script>
-      async function loadScores(){
-        const ol = document.getElementById('leaderboard');
-        ol.innerHTML = '<li class="empty">Lade Bestenliste…</li>';
-        try{
-          const res = await fetch('/scores');
-          if(!res.ok) throw new Error('Fetch error');
-          const arr = await res.json();
-          ol.innerHTML = '';
-          if(!Array.isArray(arr) || arr.length===0){
-            ol.innerHTML = '<li class="empty">Keine Einträge</li>';
-            return;
-          }
-          arr.forEach(item => {
-            const li = document.createElement('li');
-            li.className = 'score-item';
-            const name = document.createElement('div');
-            name.className = 'name';
-            name.textContent = item.name || '—';
-            const score = document.createElement('div');
-            score.className = 'pts';
-            score.textContent = item.score || 0;
-            li.appendChild(name);
-            li.appendChild(score);
-            ol.appendChild(li);
-          });
-        }catch(e){
-          ol.innerHTML = '<li class="empty">Fehler beim Laden</li>';
-          console.error(e);
-        }
-      }
-      document.getElementById('refreshBtn').addEventListener('click', loadScores);
-      // Auto-refresh every 30s
-      window.addEventListener('load', ()=>{ loadScores(); setInterval(loadScores, 30000); });
-    </script>
-  </body>
+    <div class="grid">
+      <section class="card">
+        <h2>Anmeldung</h2>
+        <div class="row">
+          <input id="nameInput" maxlength="30" placeholder="Name eingeben">
+          <button id="loginBtn" class="primary">Anmelden</button>
+          <button id="logoutBtn" class="danger">Abmelden</button>
+        </div>
+        <p class="muted" id="sessionInfo">Nicht angemeldet.</p>
+      </section>
+
+      <section class="card">
+        <h2>Spielstatus</h2>
+        <div class="row">
+          <span class="tag" id="sessionBest">Session-Best: -</span>
+        </div>
+      </section>
+    </div>
+
+    <div class="split" style="margin-top:16px">
+      <section class="card panel-list">
+        <h2>Leaderboard</h2>
+        <table>
+          <thead><tr><th>#</th><th>Name</th><th>Zeit</th></tr></thead>
+          <tbody id="leaderboardBody"></tbody>
+        </table>
+      </section>
+
+      <section class="card panel-list">
+        <h2>Deine letzten 10</h2>
+        <table>
+          <thead><tr><th>#</th><th>Zeit</th></tr></thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+
+<script>
+const statusText = document.getElementById('statusText');
+const dot = document.getElementById('dot');
+const sessionInfo = document.getElementById('sessionInfo');
+const leaderboardBody = document.getElementById('leaderboardBody');
+const historyBody = document.getElementById('historyBody');
+const sessionBest = document.getElementById('sessionBest');
+const gameSwitchDot = document.getElementById('gameSwitchDot');
+const gameSwitchText = document.getElementById('gameSwitchText');
+const nameInput = document.getElementById('nameInput');
+
+function getDeviceId(){
+  const storageKey = 'reaction-game-device-id';
+  let deviceId = localStorage.getItem(storageKey);
+  if (!deviceId) {
+    deviceId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `device-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(storageKey, deviceId);
+  }
+  return deviceId;
+}
+
+function formatTime(ms){
+  const totalCs = Math.max(0, Math.floor(ms / 10));
+  const cs = totalCs % 100;
+  const totalSec = Math.floor(totalCs / 100);
+  const sec = totalSec % 60;
+  const min = Math.floor(totalSec / 60);
+  return min > 0 ? `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}.${String(cs).padStart(2,'0')}s` : `${String(sec).padStart(2,'0')}.${String(cs).padStart(2,'0')}s`;
+}
+
+async function api(path, body){
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: body ? new URLSearchParams(body) : undefined,
+  });
+  return res.json().catch(() => ({}));
+}
+
+async function refresh(){
+  const res = await fetch('/api/state', {cache:'no-store'});
+  const state = await res.json();
+  const loggedIn = !!state.loggedIn;
+  dot.classList.toggle('on', loggedIn);
+  statusText.textContent = loggedIn ? `Angemeldet: ${state.user}` : 'Nicht angemeldet';
+  sessionInfo.textContent = loggedIn ? `Aktiv als ${state.user}` : 'Nicht angemeldet.';
+  sessionBest.textContent = loggedIn && state.sessionBestMs ? `Session-Best: ${formatTime(state.sessionBestMs)}` : 'Session-Best: -';
+  const switchOn = !!state.gameSwitchOn;
+  gameSwitchText.textContent = switchOn ? 'Spiel eingeschaltet' : 'Spiel ausgeschaltet';
+  gameSwitchDot.classList.toggle('on', switchOn);
+
+  leaderboardBody.innerHTML = '';
+  (state.leaderboard || []).forEach((row, index) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${index + 1}</td><td>${row.name}</td><td>${formatTime(row.ms)}</td>`;
+    leaderboardBody.appendChild(tr);
+  });
+  if (!leaderboardBody.children.length) {
+    leaderboardBody.innerHTML = '<tr><td colspan="3" class="muted">Noch keine Einträge</td></tr>';
+  }
+
+  historyBody.innerHTML = '';
+  (state.history || []).forEach((ms, index) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${index + 1}</td><td>${formatTime(ms)}</td>`;
+    historyBody.appendChild(tr);
+  });
+  if (!historyBody.children.length) {
+    historyBody.innerHTML = '<tr><td colspan="2" class="muted">Noch keine Zeiten</td></tr>';
+  }
+}
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const name = nameInput.value.trim();
+  if (!name) return;
+  await api('/api/login', {name, deviceId: getDeviceId()});
+  await refresh();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await api('/api/logout');
+  await refresh();
+});
+
+nameInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    document.getElementById('loginBtn').click();
+  }
+});
+
+setInterval(async () => {
+  await api('/api/ping');
+  await refresh();
+}, 5000);
+
+refresh();
+</script>
+</body>
 </html>
