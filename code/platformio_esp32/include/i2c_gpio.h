@@ -94,6 +94,27 @@ class I2C_GPIO {
     }
   }
 
+  void setAllLeds(bool enabled) {
+    outputState_ = enabled ? 0xFFFF : 0x0000;
+    if (chipPresent_[0]) {
+      writeOutputs();
+    }
+  }
+
+  void setStartIndicator(bool enabled) {
+    if (enabled) {
+      outputState_ |= (1u << GAME_START_BUTTON_LEFT_INDEX);
+      outputState_ |= (1u << GAME_START_BUTTON_RIGHT_INDEX);
+    } else {
+      outputState_ &= ~(1u << GAME_START_BUTTON_LEFT_INDEX);
+      outputState_ &= ~(1u << GAME_START_BUTTON_RIGHT_INDEX);
+    }
+
+    if (chipPresent_[0]) {
+      writeOutputs();
+    }
+  }
+
  private:
   static constexpr uint8_t MCP23017_IODIRA = 0x00;
   static constexpr uint8_t MCP23017_IODIRB = 0x01;
@@ -115,12 +136,13 @@ class I2C_GPIO {
 
   bool configureChip(uint8_t address, bool outputs) {
     if (outputs) {
+      const uint8_t idleLevel = GAME_LED_ACTIVE_LOW ? 0xFF : 0x00;
       return writeRegister(address, MCP23017_IODIRA, 0x00) &&
              writeRegister(address, MCP23017_IODIRB, 0x00) &&
              writeRegister(address, MCP23017_GPPUA, 0x00) &&
              writeRegister(address, MCP23017_GPPUB, 0x00) &&
-             writeRegister(address, MCP23017_OLATA, 0x00) &&
-             writeRegister(address, MCP23017_OLATB, 0x00);
+             writeRegister(address, MCP23017_OLATA, idleLevel) &&
+             writeRegister(address, MCP23017_OLATB, idleLevel);
     }
 
     return writeRegister(address, MCP23017_IODIRA, 0xFF) &&
@@ -131,9 +153,10 @@ class I2C_GPIO {
 
   bool writeOutputs() {
     const uint8_t address = I2C_MCP23017_BASE_ADDR + 0;
+      const uint16_t physicalState = GAME_LED_ACTIVE_LOW ? ~outputState_ : outputState_;
 
-    return writeRegister(address, MCP23017_OLATA, outputState_ & 0xFF) &&
-           writeRegister(address, MCP23017_OLATB, (outputState_ >> 8) & 0xFF);
+      return writeRegister(address, MCP23017_OLATA, physicalState & 0xFF) &&
+        writeRegister(address, MCP23017_OLATB, (physicalState >> 8) & 0xFF);
   }
 
   uint16_t readChipGpio(uint8_t chip) {

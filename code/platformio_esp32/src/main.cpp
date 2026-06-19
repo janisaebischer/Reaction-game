@@ -38,7 +38,7 @@ void setup() {
 
   if (!webApp.begin()) {
     Serial.println("Web app failed to start");
-  }9++
+  }
 
   Serial.println("Setup complete - waiting for connections...");
 }

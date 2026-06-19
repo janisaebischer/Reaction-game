@@ -51,6 +51,7 @@ static const bool GAME_CONTROL_ACTIVE_LOW = true;
 static const uint8_t GAME_BUTTON_COUNT = 15;
 static const uint8_t GAME_BUTTON_ACTIVE_LOW = true;
 static const uint8_t GAME_LED_COUNT = GAME_BUTTON_COUNT;
+static const bool GAME_LED_ACTIVE_LOW = true;
 static const uint8_t GAME_ROUND_LED_COUNT = 5;
 static const uint8_t GAME_START_BUTTON_LEFT_INDEX = 0;
 static const uint8_t GAME_START_BUTTON_RIGHT_INDEX = 1;

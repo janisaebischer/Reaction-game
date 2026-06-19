@@ -139,9 +139,15 @@ class ReactionGame {
     display_.clear();
   }
 
+  void showStartButtonsWaiting() {
+    io_.allOff();
+    io_.setLed(GAME_START_BUTTON_LEFT_INDEX, true);
+    io_.setLed(GAME_START_BUTTON_RIGHT_INDEX, true);
+  }
+
   void resetToIdle() {
     Serial.println("[GAME] resetToIdle()");
-    io_.allOff();
+    showStartButtonsWaiting();
     remainingTargetCount_ = 0;
     currentTarget_ = UINT8_MAX;
     frozenTime_ = "00.00";
@@ -161,6 +167,7 @@ class ReactionGame {
   }
 
   void handleIdle(uint32_t now, bool startPressed) {
+    showStartButtonsWaiting();
     display_.showText("00.00");
 
     if (startPressed) {
@@ -255,6 +262,7 @@ class ReactionGame {
 
     currentTarget_ = nextTarget;
 
+    io_.allOff();
     io_.setLed(currentTarget_, true);
 
     Serial.printf("[GAME] target=%u, remaining=%u\n",
@@ -328,6 +336,7 @@ class ReactionGame {
 
   void handleFinished(uint32_t now, bool startPressed) {
     (void)now;
+    showStartButtonsWaiting();
     display_.showText(frozenTime_);
 
     if (startPressed) {
